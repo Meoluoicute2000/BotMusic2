@@ -115,5 +115,5 @@ app.get('/', (req, res) => {
   const imagePath = path.join(__dirname, 'index.html');
   res.sendFile(imagePath);
 });
-app.listen(port, () => console.log('\x1b[36m%s\x1b[0m', `|    🔗 Listening to Cherry : ${port}`));
+app.listen(port, () => console.log('\x1b[36m%s\x1b[0m', `|    🔗 Cherry đang mở cổng : ${port}`));
 printWatermark();
