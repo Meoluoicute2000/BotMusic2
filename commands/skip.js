@@ -16,13 +16,13 @@ module.exports = {
     try {
 
       const queue = client.player.getQueue(interaction.guild.id);
-      if (!queue || !queue.playing) return interaction.reply({ content: '⚠️ Không phát nhạc!!', ephemeral: true }).catch(e => { })
+      if (!queue || !queue.playing) return interaction.reply({ content: '⚠️ Không có bài hát nào đang phát !!', ephemeral: true }).catch(e => { })
 
       let number = interaction.options.getNumber('number');
       if (number) {
-        if (!queue.songs.length > number) return interaction.reply({ content: '⚠️ Đã vượt quá số lượng bài hát hiện tại', ephemeral: true }).catch(e => { })
-        if (isNaN(number)) return interaction.reply({ content: '⚠️ Số không hợp lệ', ephemeral: true }).catch(e => { })
-        if (1 > number) return interaction.reply({ content: '⚠️ Số không hợp lệ', ephemeral: true }).catch(e => { })
+        if (!queue.songs.length > number) return interaction.reply({ content: '⚠️ Đã vượt quá số lượng bài hát trong hàng chờ', ephemeral: true }).catch(e => { })
+        if (isNaN(number)) return interaction.reply({ content: '⚠️ Con số không hợp lệ', ephemeral: true }).catch(e => { })
+        if (1 > number) return interaction.reply({ content: '⚠️ Con số không hợp lệ', ephemeral: true }).catch(e => { })
 
         try {
         let old = queue.songs[0];
@@ -36,7 +36,7 @@ module.exports = {
 try {
   const queue = client.player.getQueue(interaction.guild.id);
   if (!queue || !queue.playing) {
-    return interaction.reply({ content: '⚠️ Không phát nhạc!!', ephemeral: true });
+    return interaction.reply({ content: '⚠️ Không có bài hát nào đang phát !!', ephemeral: true });
   }
 
   let old = queue.songs[0];
@@ -47,9 +47,10 @@ try {
     .setAuthor({
       name: 'Bài hát bị bỏ qua',
       iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157269773118357604/giphy.gif',
-      url: 'https://discord.gg/'
+      url: 'https://discord.gg/Na6FFYMPW6'
     })
     .setDescription(success ? ` **Bỏ qua!** : **${old.name}**` : '❌ Hàng đợi trống!')
+    .setFooter({ text: 'Made By Cherry' })
     .setTimestamp();
 
   return interaction.reply({ embeds: [embed] });

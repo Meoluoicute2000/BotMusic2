@@ -4,7 +4,7 @@ const db = require("../mongoDB");
 
 module.exports = {
   name: "volume",
-  description: "Cho phép bạn điều chỉnh âm lượng nhạc.",
+  description: "Cho phép bạn điều chỉnh âm lượng nhạc - Mặc định: 50.",
   permissions: "0x0000000000000800",
   options: [{
     name: 'volume',
@@ -17,7 +17,7 @@ module.exports = {
     try {
       const queue = client.player.getQueue(interaction.guild.id);
       if (!queue || !queue.playing) {
-        return interaction.reply({ content: '⚠️ Không có âm nhạc chơi!!', ephemeral: true });
+        return interaction.reply({ content: '⚠️ Không có bài hát nào đang phát!!', ephemeral: true });
       }
 
       const vol = parseInt(interaction.options.getInteger('volume'));
@@ -48,9 +48,11 @@ module.exports = {
           .setAuthor({
         name: 'Âm nhạc của bạn',
         iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157528025739563088/5657-volume-icon.png', 
-        url: 'https://discord.gg/'
+        url: 'https://discord.gg/Na6FFYMPW6'
     })
-          .setDescription(`**Điều chỉnh âm lượng : ** **${vol}/${maxVol}**`);
+          .setDescription(`**Điều chỉnh âm lượng : ** **${vol}/${maxVol}**`)
+          .setFooter({ text: 'Made By Cherry' })
+          .setTimestamp();
 
         return interaction.reply({ embeds: [embed] });
       } else {

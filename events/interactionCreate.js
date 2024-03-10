@@ -1,6 +1,6 @@
 const config = require("../config.js");
 const { EmbedBuilder, InteractionType } = require('discord.js');
-const db = require("../mongoDB");
+const db = require("../mongoDB.js");
 const fs = require("fs");
 
 module.exports = async (client, interaction) => {
@@ -58,6 +58,7 @@ module.exports = async (client, interaction) => {
                                                                 .setColor(client.config.embedColor)
                                                                 .setTitle(client?.user?.username)
                                                                 .setThumbnail(client?.user?.displayAvatarURL())
+                                                                .setFooter({ text: 'Made By Cherry' })
                                                                 .setTimestamp();
 
                                                             return interaction?.reply({ embeds: [embed], ephemeral: true }).catch(e => { });

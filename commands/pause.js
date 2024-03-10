@@ -12,7 +12,7 @@ module.exports = {
 
     try {
       if (!queue || !queue.playing) {
-        return interaction.reply({ content: '⚠️ Không phát nhạc!!', ephemeral: true });
+        return interaction.reply({ content: '⚠️ Không có bài hát nào đang phát !!', ephemeral: true });
       }
 
       const success = queue.pause();
@@ -20,12 +20,13 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setColor('#7645fe') 
         .setAuthor({
-          name: 'Dừng phát nhạc',
+          name: 'Tạm dừng bài hát đang phát.',
           iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157296313013117049/8061-purple-pause-icon.png',
-          url: 'https://discord.gg/'
+          url: 'https://discord.gg/Na6FFYMPW6'
         })
-        .setDescription(success ? '**Nhạc đã bị tạm dừng !!**' : '❌ Lệnh Lỗi: Không thể tạm dừng bài hát')
-
+        .setDescription(success ? '**Nhạc đã bị tạm dừng !!**' : '❌ Lỗi: Không thể tạm dừng bài hát')
+        .setFooter({ text: 'Made By Cherry' })
+        .setTimestamp();
 
       return interaction.reply({ embeds: [embed] });
     } catch (e) {

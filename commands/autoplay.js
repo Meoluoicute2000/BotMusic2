@@ -10,16 +10,17 @@ module.exports = {
     try {
       const queue = client?.player?.getQueue(interaction?.guild?.id);
       if (!queue || !queue?.playing) {
-        return interaction?.reply({ content: '⚠️ Không phát nhạc!!', ephemeral: true });
+        return interaction?.reply({ content: '⚠️ Không có bài hát nào đang phát !!', ephemeral: true });
       }
 
       queue?.toggleAutoplay();
 
       const embed = new EmbedBuilder()
         .setColor('#2f58fe')
-        .setTitle('Tự động phát nhạc dựa theo đề xuất!!')
+        .setTitle('Tự động phát nhạc dựa theo đề xuất!')
         .setDescription(queue?.autoplay ? '**✅ Autoplay Bật**' : '**❌ Autoplay Tắt**')
-
+        .setFooter({ text: 'Made By Cherry' })
+        .setTimestamp();
 
       interaction?.reply({ embeds: [embed] });
     } catch (e) {

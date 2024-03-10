@@ -1,4 +1,5 @@
 const db = require("../mongoDB");
+
 module.exports = async (client, oldState, newState) => {
     const queue = client.player.getQueue(oldState.guild.id);
 

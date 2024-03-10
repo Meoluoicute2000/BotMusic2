@@ -1,11 +1,13 @@
 const { ApplicationCommandOptionType, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const db = require("../mongoDB");
+const { opt } = require("../config.js")
 
 let selectedThumbnailURL;
+module.exports.selectedThumbnailURL = selectedThumbnailURL;
 
 module.exports = {
   name: "play",
-  description: "Phát nhạc (Mặc định là YouTube)!!",
+  description: "Phát nhạc (Mặc định phát nhạc là YouTube)!",
   permissions: "0x0000000000000800",
   options: [{
     name: 'name',
@@ -34,7 +36,9 @@ module.exports = {
 
       const embed = new EmbedBuilder();
       embed.setColor(client.config.embedColor);
-      embed.setTitle(`Đã tìm thấy các bài hát liên quan : ${name}`);
+      embed.setFooter({ text: 'Made By Cherry' });
+      embed.setTitle(`Đã tìm thấy các bài hát liên quan: [Thanh Tìm Kiểm: *${name}*]`);
+      embed.setTimestamp();
 
       const maxTracks = res.slice(0, 10);
 
@@ -66,7 +70,9 @@ module.exports = {
           .setCustomId('cancel')
       );
 
-      embed.setDescription(`${maxTracks.map((song, i) => `**${i + 1}**. [${song.name}](${song.url}) | \`${song.uploader.name}\``).join('\n')}\n\n✨Chọn một bài hát từ bên dưới!!`);
+      embed.setDescription(`${maxTracks.map((song, i) => `**${i + 1}**. [${song.name}](${song.url}) | \`Tác giả: ${song.uploader.name}\``).join('\n')}\n\n✨Chọn một bài hát từ bên dưới!!`);
+      embed.setFooter({ text: 'Made By Cherry' });
+      embed.setTimestamp();
 
       let code;
       if (buttons1 && buttons2) {
@@ -77,7 +83,7 @@ module.exports = {
 
       interaction.reply(code).then(async Message => {
         const filter = i => i.user.id === interaction.user.id;
-        let collector = await Message.createMessageComponentCollector({ filter, time: 60000 });
+        let collector = await Message.createMessageComponentCollector({ filter, time: 30000 });
 
         collector.on('collect', async (button) => {
           switch (button.customId) {
@@ -108,7 +114,9 @@ module.exports = {
 
         collector.on('end', (msg, reason) => {
           if (reason === 'time') {
-            embed.setDescription(lang.msg80);
+            embed.setDescription("**😺 Phát hiện chưa lựa chọn nhạc sau 30 giây.**\n **🍒 Tự động sửa tin nhắn để ember ngắn gọn!**");
+            embed.setFooter({ text: 'Made By Cherry' });
+            embed.setTimestamp();
             return interaction.editReply({ embeds: [embed], components: [] }).catch(e => { });
           }
         });
@@ -118,4 +126,3 @@ module.exports = {
     }
   },
 };
-module.exports.selectedThumbnailURL = selectedThumbnailURL;

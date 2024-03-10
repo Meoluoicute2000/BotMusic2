@@ -2,17 +2,17 @@ const { ApplicationCommandOptionType, EmbedBuilder } = require('discord.js');
 const db = require("../mongoDB");
 module.exports = {
   name: "playsong",
-  description: "Play a track.",
+  description: "Phát nhạc",
   permissions: "0x0000000000000800",
   options: [
     {
       name: "normal",
-      description: "Mở nhạc từ các nền tảng khác.",
+      description: "Mở nhạc từ các nền tảng khác - Hỗ trợ Spotify, Soundcloud, Deezer, Youtube.",
       type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
           name: "name",
-          description: "Viết tên nhạc của bạn.",
+          description: "Viết tên nhạc của bạn - Hỗ trợ dán link.",
           type: ApplicationCommandOptionType.String,
           required: true
         }
@@ -20,12 +20,12 @@ module.exports = {
     },
     {
       name: "playlist",
-      description: "Viết tên danh sách phát của bạn.",
+      description: "Phát danh sách Playlist của bạn.",
       type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
           name: "name",
-          description: "Viết tên danh sách phát bạn muốn tạo.",
+          description: "Viết tên danh sách phát bạn đã tạo.",
           type: ApplicationCommandOptionType.String,
           required: true
         }
@@ -44,7 +44,7 @@ module.exports = {
       if (stp === "playlist") {
         let playlistw = interaction.options.getString('name')
         let playlist = await db?.playlist?.find().catch(e => { })
-        if (!playlist?.length > 0) return interaction.reply({ content: `❌`, ephemeral: true }).catch(e => { })
+        if (!playlist?.length > 0) return interaction.reply({ content: `❌ Không có Playlist!`, ephemeral: true }).catch(e => { })
 
         let arr = 0
         for (let i = 0; i < playlist.length; i++) {
@@ -55,14 +55,19 @@ module.exports = {
 
             if (playlist_owner_filter !== interaction.member.id) {
               if (playlist_public_filter === false) {
-                return interaction.reply({ content: `❌`, ephemeral: true }).catch(e => { })
+                return interaction.reply({ content: `❌ Không có quyền phát Playlist!`, ephemeral: true }).catch(e => { })
               }
             }
 
             const music_filter = playlist[i]?.musics?.filter(m => m.playlist_name === playlistw)
-            if (!music_filter?.length > 0) return interaction.reply({ content: `❌`, ephemeral: true }).catch(e => { })
-
-            interaction.reply({ content: `❌` }).catch(e => { })
+            if (!music_filter?.length > 0) return interaction.reply({ content: `Không có tên nhạc nào như vậy!`, ephemeral: true }).catch(e => { })
+            const listembed = new EmbedBuilder()
+            .setTitle('Đang tải Playlist')
+            .setColor('#FF0000')
+            .setDescription('**Chuẩn bị phát nhạc rồi🍒!**')
+            .setFooter({ text: 'Made By Cherry' })
+            .setTimestamp();
+        interaction.reply({ content : '', embeds: [listembed] }).catch(e => { })
 
             let songs = []
             music_filter.map(m => songs.push(m.music_url))
@@ -74,7 +79,19 @@ module.exports = {
                 parallel: true
               });
 
-              await interaction.editReply({ content: `❌`.replace("{interaction.member.id}", interaction.member.id).replace("{music_filter.length}", music_filter.length) }).catch(e => { })
+              const qembed = new EmbedBuilder()
+        .setAuthor({
+        name: 'Thêm Playlist vào hàng chờ!',
+        iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157218651179597884/1213-verified.gif', 
+        url: 'https://discord.gg/Na6FFYMPW6'
+    })
+        .setColor('#14bdff')
+        .setFooter({ text: 'Sử dụng /queue để kiểm tra hàng chờ.' })
+        .setTimestamp();
+
+              await interaction.editReply({ content: '',embeds: [qembed] }).catch(e => {
+                  console.error('Lỗi trả lời', e);
+                });
 
               try {
                 await client.player.play(interaction.member.voice.channel, playl, {
@@ -112,7 +129,7 @@ module.exports = {
           } else {
             arr++
             if (arr === playlist.length) {
-              return interaction.reply({ content: `❌`, ephemeral: true }).catch(e => { })
+              return interaction.reply({ content: `❌ Không có Playlist nào ở đây!`, ephemeral: true }).catch(e => { })
             }
           }
         }
@@ -126,7 +143,9 @@ module.exports = {
 
   const embed = new EmbedBuilder()
         .setColor('#FF0000')
-        .setDescription('**🎸 Đang tìm kiếm bản nhạc bạn cần nghe. . . .** \n \n**🎀 Hãy tận hưởng âm nhạc không giới hạn với MongoDB.**\n \n**🍒 Nếu có lỗi xảy ra khi phát nhạc vui lòng liên hệ Cherry.**\n \n**✨Đây là bản Update của Bot nhạc mới do Cherry code.**\n \n**⚠️Không sử dụng trái phép mã nguồn của Cherry.**\n \n**😻Sử dụng soucre code của Cherry xin vui lòng ghi nguồn!**');
+        .setDescription('**🍒 Đang tìm kiếm bản nhạc bạn cần nghe. . . .** \n**😻 Sử dụng soucre code của Cherry xin vui lòng ghi nguồn!**')
+        .setFooter({ text: 'Made By Cherry' })
+        .setTimestamp();
         await interaction.reply({ embeds: [embed] }).catch(e => {});
 
   try {
@@ -138,7 +157,9 @@ module.exports = {
   } catch (e) {
     const errorEmbed = new EmbedBuilder()
       .setColor('#FF0000')
-      .setDescription('❌ Không có kết quả nào được tìm thấy!!');
+      .setDescription('❌ Không có kết quả nào được tìm thấy!!')
+      .setFooter({ text: 'Made By Cherry' })
+      .setTimestamp();
 
     await interaction.editReply({ embeds: [errorEmbed], ephemeral: true }).catch(e => {});
   }

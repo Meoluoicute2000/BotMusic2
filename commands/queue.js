@@ -10,8 +10,8 @@ module.exports = {
     try {
 
      const queue = client.player.getQueue(interaction.guild.id);
-      if (!queue || !queue.playing) return interaction.reply({ content: '⚠️ Không có âm nhạc chơi!!', ephemeral: true }).catch(e => { })
-      if (!queue.songs[0]) return interaction.reply({ content: '⚠️ Hàng đợi trống!!', ephemeral: true }).catch(e => { })
+      if (!queue || !queue.playing) return interaction.reply({ content: '⚠️ Không có bài hát nào đang phát !!', ephemeral: true }).catch(e => { })
+      if (!queue.songs[0]) return interaction.reply({ content: '⚠️ Hàng đợi đang trống!!', ephemeral: true }).catch(e => { })
 
       const trackl = []
       queue.songs.map(async (track, i) => {
@@ -45,14 +45,14 @@ module.exports = {
       });
 
 
-      let kaçtane = 8
+      let howmuch = 8
       let page = 1
-      let a = trackl.length / kaçtane
+      let a = trackl.length / howmuch
 
       const generateEmbed = async (start) => {
-        let sayı = page === 1 ? 1 : page * kaçtane - kaçtane + 1
-        const current = trackl.slice(start, start + kaçtane)
-        if (!current || !current?.length > 0) return interaction.reply({ content: '⚠️ Hàng đợi trống!!', ephemeral: true }).catch(e => { })
+        let sayı = page === 1 ? 1 : page * howmuch - howmuch + 1
+        const current = trackl.slice(start, start + howmuch)
+        if (!current || !current?.length > 0) return interaction.reply({ content: '⚠️ Hàng đợi đang trống!!', ephemeral: true }).catch(e => { })
         return new EmbedBuilder()
           .setTitle(`${interaction.guild.name}  Queue`)
           .setThumbnail(interaction.guild.iconURL({ size: 2048, dynamic: true }))
@@ -62,9 +62,11 @@ module.exports = {
             `\n\`${sayı++}\` | [${data.title}](${data.url}) | (Thực hiện bởi <@${data.user.id}>)`
           )}`)
           .setFooter({ text: `Page ${page}/${Math.floor(a + 1)}` })
+          .setFooter({ text: 'Made By Cherry' })
+          .setTimestamp();
       }
 
-      const canFitOnOnePage = trackl.length <= kaçtane
+      const canFitOnOnePage = trackl.length <= howmuch
 
       await interaction.reply({
         embeds: [await generateEmbed(0)],
@@ -81,7 +83,7 @@ module.exports = {
         collector.on("collect", async (button) => {
           if (button?.customId === "close") {
             collector?.stop()
-           return button?.reply({ content: 'Lệnh đã bị hủy', ephemeral: true }).catch(e => { })
+           return button?.reply({ content: 'Lệnh đã bị hủy!', ephemeral: true }).catch(e => { })
           } else {
 
             if (button.customId === backId) {
@@ -92,8 +94,8 @@ module.exports = {
             }
 
             button.customId === backId
-              ? (currentIndex -= kaçtane)
-              : (currentIndex += kaçtane)
+              ? (currentIndex -= howmuch)
+              : (currentIndex += howmuch)
 
             await interaction.editReply({
               embeds: [await generateEmbed(currentIndex)],
@@ -102,7 +104,7 @@ module.exports = {
                   components: [
                     ...(currentIndex ? [backButton] : []),
                     deleteButton,
-                    ...(currentIndex + kaçtane < trackl.length ? [forwardButton] : []),
+                    ...(currentIndex + howmuch < trackl.length ? [forwardButton] : []),
                   ],
                 }),
               ],
@@ -133,6 +135,7 @@ module.exports = {
             .setTitle('Command Timeout')
             .setColor(`#ecfc03`)
             .setDescription('▶️ Thực hiện lại lệnh Hàng đợi!!')
+            .setTimestamp();
           return interaction?.editReply({ embeds: [embed], components: [button] }).catch(e => { })
 
         })

@@ -9,7 +9,7 @@ module.exports = {
   run: async (client, interaction) => {
     try {
       const queue = client.player.getQueue(interaction.guild.id);
-      if (!queue || !queue.playing) return interaction.reply({ content: '⚠️ Không chơi nhạc!!', ephemeral: true }).catch(e => {});
+      if (!queue || !queue.playing) return interaction.reply({ content: '⚠️ Không có bài hát nào đang phát !!', ephemeral: true }).catch(e => {});
 
       let button = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
@@ -29,22 +29,24 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setColor('#fc4e03')
         .setAuthor({
-          name: 'Loop Your Melodies',
+          name: 'Lặp lại giai điệu.',
           iconURL: 'https://cdn.discordapp.com/attachments/1156866389819281418/1157318080670728283/7905-repeat.gif',
-          url: 'https://discord.gg/'
+          url: 'https://discord.gg/Na6FFYMPW6'
         })
-        .setDescription('**Để âm nhạc phát đi phát lại. **');
+        .setDescription('**Để bài hát được phát lặp lại. **')
+        .setFooter({text: 'Made By Cherry' })
+        .setTimestamp();
 
       interaction?.reply({ embeds: [embed], components: [button], fetchReply: true }).then(async Message => {
         const filter = i => i.user.id === interaction.user.id;
-        let col = await Message.createMessageComponentCollector({ filter, time: 120000 });
+        let col = await Message.createMessageComponentCollector({ filter, time: 30000 });
 
         col.on('collect', async (button) => {
           if (button.user.id !== interaction.user.id) return;
 
           const queue1 = client.player.getQueue(interaction.guild.id);
           if (!queue1 || !queue1.playing) {
-            await interaction?.editReply({ content: '⚠️ Không có âm nhạc chơi!!', ephemeral: true }).catch(e => {});
+            await interaction?.editReply({ content: '⚠️ Không có bài hát nào đang phát!', ephemeral: true }).catch(e => {});
             await button?.deferUpdate().catch(e => {});
           }
 
@@ -71,21 +73,14 @@ module.exports = {
           }
         });
 
-        col.on('end', async (button) => {
-          button = new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-              .setStyle(ButtonStyle.Secondary)
-              .setLabel("Timeout")
-              .setCustomId("Timeend")
-              .setDisabled(true)
-          );
-
+        col.on('end', async () => {
           const embed = new EmbedBuilder()
             .setColor('#fc5203')
-            .setTitle('▶️ Vòng lặp tắt!!')
+            .setTitle('Tự động sửa tin nhắn để embed ngắn gọn!')
+            .setFooter({text: 'Made By Cherry' })
             .setTimestamp();
 
-          await interaction?.editReply({ content: "", embeds: [embed], components: [button] }).catch(e => {});
+          await interaction?.editReply({ content: "", embeds: [embed], components: [] }).catch(e => {});
         });
       }).catch(e => {});
 

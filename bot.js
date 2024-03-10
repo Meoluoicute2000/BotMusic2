@@ -4,7 +4,7 @@ const { SpotifyPlugin } = require("@distube/spotify");
 const { SoundCloudPlugin } = require("@distube/soundcloud");
 const { DeezerPlugin } = require("@distube/deezer");
 const { YtDlpPlugin } = require("@distube/yt-dlp");
-const { printWatermark } = require('./util/pw');
+const { printWatermark } = require('./util/printwatermark');
 const config = require("./config.js");
 const fs = require("fs");
 const path = require('path');
@@ -39,6 +39,7 @@ client.player = new DisTube(client, {
   ],
 });
 
+process.env.YTDL_NO_UPDATE = true;
 const player = client.player;
 
 fs.readdir("./events", (_err, files) => {
@@ -81,7 +82,6 @@ fs.readdir(config.commandsDir, (err, files) => {
 });
 
 
-
 if (config.TOKEN || process.env.TOKEN) {
   client.login(config.TOKEN || process.env.TOKEN).catch((e) => {
     console.log('TOKEN đã bị lỗi❌');
@@ -106,8 +106,7 @@ if(config.mongodbURL || process.env.MONGO){
   } else {
   console.log('\x1b[32m%s\x1b[0m', `|    🍔 Lỗi MongoDB!`)
   }
-
-
+  
 const express = require("express");
 const app = express();
 const port = 4000;
@@ -115,5 +114,5 @@ app.get('/', (req, res) => {
   const imagePath = path.join(__dirname, 'index.html');
   res.sendFile(imagePath);
 });
-app.listen(port, () => console.log('\x1b[36m%s\x1b[0m', `|    🔗 Cherry đang mở cổng : ${port}`));
+app.listen(port, () => console.log('\x1b[36m%s\x1b[0m', `|    🍒 Cherry đang mở cổng : ${port}`));
 printWatermark();
